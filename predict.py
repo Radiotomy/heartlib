@@ -4,56 +4,32 @@ import torch
 import torchaudio
 from cog import BasePredictor, Input, Path
 from transformers import AutoTokenizer
+from huggingface_hub import snapshot_download
 
 import sys
 sys.path.append('/src/heartlib')
 from heartlib.models import HeartMuLaModel, HeartCodecModel
-
-class CUDAGraphRunner:
-    # ... (Keep CUDAGraphRunner exactly the same as the previous version)
-    def __init__(self, model, static_inputs):
-        self.model = model
-        self.static_inputs = static_inputs
-        self.graph = torch.cuda.CUDAGraph()
-        self.static_outputs = None
-
-    def capture(self):
-        s = torch.cuda.Stream()
-        s.wait_stream(torch.cuda.current_stream())
-        with torch.cuda.stream(s):
-            for _ in range(3):
-                self.static_outputs = self.model(**self.static_inputs)
-        torch.cuda.current_stream().wait_stream(s)
-
-        with torch.cuda.graph(self.graph):
-            self.static_outputs = self.model(**self.static_inputs)
-
-    def replay(self, dynamic_inputs):
-        for k, v in dynamic_inputs.items():
-            if k in self.static_inputs:
-                self.static_inputs[k].copy_(v)
-        self.graph.replay()
-        return self.static_outputs
 
 class Predictor(BasePredictor):
     def setup(self):
         self.mula_device = "cuda:0"
         self.codec_device = "cuda:0"
         
-        # CHANGED: Point to the absolute path where cog.yaml downloaded the weights
-        self.ckpt_path = "/src/ckpt" 
+        print("Downloading/Locating HeartMuLa weights from Hugging Face...")
+        mula_path = snapshot_download(repo_id="HeartMuLa/HeartMuLa-oss-3B")
+        codec_path = snapshot_download(repo_id="HeartMuLa/HeartCodec-oss")
         
         print("Loading HeartMuLa Tokenizer...")
-        self.tokenizer = AutoTokenizer.from_pretrained(f"{self.ckpt_path}/HeartMuLa-oss-3B")
+        self.tokenizer = AutoTokenizer.from_pretrained(mula_path)
         
         print("Loading HeartMuLa 3B (bf16) and HeartCodec (fp32)...")
         self.mula_model = HeartMuLaModel.from_pretrained(
-            f"{self.ckpt_path}/HeartMuLa-oss-3B", 
+            mula_path, 
             torch_dtype=torch.bfloat16
         ).to(self.mula_device).eval()
         
         self.codec_model = HeartCodecModel.from_pretrained(
-            f"{self.ckpt_path}/HeartCodec-oss", 
+            codec_path, 
             torch_dtype=torch.float32
         ).to(self.codec_device).eval()
         
