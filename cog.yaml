@@ -1,0 +1,31 @@
+build:
+  gpu: true
+  cuda: "12.1"
+  python_version: "3.10"
+  system_packages:
+    - "libsndfile1"
+    - "git"
+  python_packages:
+    - "numpy==2.0.2"
+    - "torch==2.4.1"
+    - "torchaudio==2.4.1"
+    - "torchtune==0.4.0"
+    - "torchao==0.3.0"
+    - "torchvision==0.19.1"
+    - "tqdm==4.67.1"
+    - "transformers==4.57.0"
+    - "tokenizers==0.22.1"
+    - "einops==0.8.1"
+    - "accelerate==1.1.12.0"
+    - "bitsandbytes==0.49.0"
+    - "vector-quantize-pytorch==1.27.15"
+    - "modelscope==1.33.0"
+    - "soundfile"
+    - "huggingface-hub"
+
+  run:
+    # Pre-download the weights during the build process
+    - "huggingface-cli download --local-dir './ckpt/HeartMuLa-oss-3B' 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123'"
+    - "huggingface-cli download --local-dir './ckpt/HeartCodec-oss' 'HeartMuLa/HeartCodec-oss-20260123'"
+
+predict: "predict.py:Predictor"
