@@ -1,0 +1,27 @@
+name: Push to Replicate
+
+# Trigger the workflow when changes are pushed to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    # We use an Ubuntu runner provided by GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the code from your repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Cog (Replicate's build tool) and authenticate
+      - name: Setup Cog
+        uses: replicate/setup-cog@v2
+        with:
+          token: ${{ secrets.REPLICATE_API_TOKEN }}
+
+      # 3. Build and push the model to Replicate
+      - name: Push to Replicate
+        run: cog push r8.im/speedwolf2000/siren-song
