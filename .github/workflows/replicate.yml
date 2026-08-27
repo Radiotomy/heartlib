@@ -12,23 +12,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Check out the code from your repository
+      # 1. Free up ~30GB of disk space on the runner by removing unused software
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      # 2. Check out the code from your repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Download the model weights before Cog builds the container
+      # 3. Download the model weights before Cog builds the container
       - name: Download model weights
         run: |
           pip install huggingface_hub
           hf download 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123' --local-dir './ckpt/HeartMuLa-oss-3B'
           hf download 'HeartMuLa/HeartCodec-oss-20260123' --local-dir './ckpt/HeartCodec-oss'
 
-      # 3. Set up Cog (Replicate's build tool) and authenticate
+      # 4. Set up Cog (Replicate's build tool) and authenticate
       - name: Setup Cog
         uses: replicate/setup-cog@v2
         with:
           token: ${{ secrets.REPLICATE_API_TOKEN }}
 
-      # 4. Build and push the model to Replicate
+      # 5. Build and push the model to Replicate
       - name: Push to Replicate
         run: cog push r8.im/speedwolf2000/siren-song
