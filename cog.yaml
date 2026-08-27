@@ -11,19 +11,19 @@ build:
     - "torchaudio==2.4.1"
     - "transformers>=4.44.0"
     - "accelerate>=0.33.0"
-    - "flash-attn>=2.6.3"
     - "scipy"
     - "soundfile"
     - "numpy"
     - "safetensors"
     - "huggingface_hub"
   run:
-    # 1. Clone and install the HeartMuLa library
-    - "git clone https://github.com/HeartMuLa/heartlib.git /src/heartlib"
+    # 1. Install flash-attn safely without triggering isolated metadata errors
+    - "pip install flash-attn==2.6.3 --no-build-isolation"
+    # 2. Clone and install the HeartMuLa library
+    - "git clone https://github.com/Radiotomy/heartlib.git /src/heartlib"
     - "cd /src/heartlib && pip install -e ."
-    # 2. Prepare directory for weights
+    # 3. Prepare directory and download weights directly during the Docker build
     - "mkdir -p /src/ckpt"
-    # 3. Download weights directly during the Docker build
     - "huggingface-cli download HeartMuLa/HeartMuLa-oss-3B --local-dir /src/ckpt/HeartMuLa-oss-3B --exclude '*.md' '*.txt'"
     - "huggingface-cli download HeartMuLa/HeartCodec-oss --local-dir /src/ckpt/HeartCodec-oss --exclude '*.md' '*.txt'"
 
