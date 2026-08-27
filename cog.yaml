@@ -22,10 +22,4 @@ build:
     - "modelscope==1.33.0"
     - "soundfile"
     - "huggingface-hub"
-
-  run:
-    # Pre-download the weights during the build process
-    - "huggingface-cli download --local-dir './ckpt/HeartMuLa-oss-3B' 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123'"
-    - "huggingface-cli download --local-dir './ckpt/HeartCodec-oss' 'HeartMuLa/HeartCodec-oss-20260123'"
-
 predict: "predict.py:Predictor"
