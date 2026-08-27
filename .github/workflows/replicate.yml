@@ -20,8 +20,8 @@ jobs:
       - name: Download model weights
         run: |
           pip install huggingface_hub
-          huggingface-cli download --local-dir './ckpt/HeartMuLa-oss-3B' 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123'
-          huggingface-cli download --local-dir './ckpt/HeartCodec-oss' 'HeartMuLa/HeartCodec-oss-20260123'
+          hf download 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123' --local-dir './ckpt/HeartMuLa-oss-3B'
+          hf download 'HeartMuLa/HeartCodec-oss-20260123' --local-dir './ckpt/HeartCodec-oss'
 
       # 3. Set up Cog (Replicate's build tool) and authenticate
       - name: Setup Cog
