@@ -22,9 +22,5 @@ build:
     # 2. Clone and install the HeartMuLa library
     - "git clone https://github.com/Radiotomy/heartlib.git /src/heartlib"
     - "cd /src/heartlib && pip install -e ."
-    # 3. Prepare directory and download weights directly during the Docker build
-    - "mkdir -p /src/ckpt"
-    - "huggingface-cli download HeartMuLa/HeartMuLa-oss-3B --local-dir /src/ckpt/HeartMuLa-oss-3B --exclude '*.md' '*.txt'"
-    - "huggingface-cli download HeartMuLa/HeartCodec-oss --local-dir /src/ckpt/HeartCodec-oss --exclude '*.md' '*.txt'"
 
 predict: "predict.py:Predictor"
