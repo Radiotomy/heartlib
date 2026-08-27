@@ -18,10 +18,13 @@ build:
     - "safetensors"
     - "huggingface_hub"
   run:
-    # Clone the official HeartMuLa repository and install it
+    # 1. Clone and install the HeartMuLa library
     - "git clone https://github.com/HeartMuLa/heartlib.git /src/heartlib"
     - "cd /src/heartlib && pip install -e ."
-    # Pre-download weights into the image to prevent cold-boot latency
-    - "python script/download_weights.py"
+    # 2. Prepare directory for weights
+    - "mkdir -p /src/ckpt"
+    # 3. Download weights directly during the Docker build
+    - "huggingface-cli download HeartMuLa/HeartMuLa-oss-3B --local-dir /src/ckpt/HeartMuLa-oss-3B --exclude '*.md' '*.txt'"
+    - "huggingface-cli download HeartMuLa/HeartCodec-oss --local-dir /src/ckpt/HeartCodec-oss --exclude '*.md' '*.txt'"
 
 predict: "predict.py:Predictor"
