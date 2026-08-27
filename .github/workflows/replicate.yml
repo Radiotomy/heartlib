@@ -16,12 +16,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Set up Cog (Replicate's build tool) and authenticate
+      # 2. Download the model weights before Cog builds the container
+      - name: Download model weights
+        run: |
+          pip install huggingface_hub
+          huggingface-cli download --local-dir './ckpt/HeartMuLa-oss-3B' 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123'
+          huggingface-cli download --local-dir './ckpt/HeartCodec-oss' 'HeartMuLa/HeartCodec-oss-20260123'
+
+      # 3. Set up Cog (Replicate's build tool) and authenticate
       - name: Setup Cog
         uses: replicate/setup-cog@v2
         with:
           token: ${{ secrets.REPLICATE_API_TOKEN }}
 
-      # 3. Build and push the model to Replicate
+      # 4. Build and push the model to Replicate
       - name: Push to Replicate
         run: cog push r8.im/speedwolf2000/siren-song
