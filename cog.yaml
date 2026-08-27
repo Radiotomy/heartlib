@@ -3,23 +3,25 @@ build:
   cuda: "12.1"
   python_version: "3.10"
   system_packages:
+    - "ffmpeg"
     - "libsndfile1"
     - "git"
   python_packages:
-    - "numpy==2.0.2"
     - "torch==2.4.1"
     - "torchaudio==2.4.1"
-    - "torchtune==0.4.0"
-    - "torchao==0.5.0"
-    - "torchvision==0.19.1"
-    - "tqdm==4.67.1"
-    - "transformers==4.57.0"
-    - "tokenizers==0.22.1"
-    - "einops==0.8.1"
-    - "accelerate"
-    - "bitsandbytes==0.49.0"
-    - "vector-quantize-pytorch==1.27.15"
-    - "modelscope==1.33.0"
+    - "transformers>=4.44.0"
+    - "accelerate>=0.33.0"
+    - "flash-attn>=2.6.3"
+    - "scipy"
     - "soundfile"
-    - "huggingface-hub"
+    - "numpy"
+    - "safetensors"
+    - "huggingface_hub"
+  run:
+    # Clone the official HeartMuLa repository and install it
+    - "git clone https://github.com/HeartMuLa/heartlib.git /src/heartlib"
+    - "cd /src/heartlib && pip install -e ."
+    # Pre-download weights into the image to prevent cold-boot latency
+    - "python script/download_weights.py"
+
 predict: "predict.py:Predictor"
