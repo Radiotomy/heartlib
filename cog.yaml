@@ -10,7 +10,7 @@ build:
     - "torch==2.4.1"
     - "torchaudio==2.4.1"
     - "torchtune==0.4.0"
-    - "torchao==0.3.0"
+    - "torchao"
     - "torchvision==0.19.1"
     - "tqdm==4.67.1"
     - "transformers==4.57.0"
