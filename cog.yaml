@@ -16,7 +16,7 @@ build:
     - "transformers==4.57.0"
     - "tokenizers==0.22.1"
     - "einops==0.8.1"
-    - "accelerate==1.1.12.0"
+    - "accelerate"
     - "bitsandbytes==0.49.0"
     - "vector-quantize-pytorch==1.27.15"
     - "modelscope==1.33.0"
