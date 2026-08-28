@@ -41,9 +41,9 @@ jobs:
         with:
           token: ${{ secrets.REPLICATE_API_TOKEN }}
 
-      # 5. Build and push the model to Replicate with explicit L40S hardware allocation
+      # 5. Build and push the model to Replicate (standard clean push)
       - name: Push to Replicate
-        run: cog push r8.im/speedwolf2000/siren-song --hardware gpu-l40s
+        run: cog push r8.im/speedwolf2000/siren-song
 
       # 6. Verify the new push boots successfully on Replicate
       - name: Boot-health check the pushed version
