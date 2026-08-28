@@ -1,12 +1,13 @@
 import os
 import time
 import torch
+import torch.nn as nn  # Fixes the missing 'nn' scope for transformers accelerate integration
 import torchaudio
 from cog import BasePredictor, Input, Path
 from transformers import AutoTokenizer
 from huggingface_hub import snapshot_download
 
-# Ensure local src/ directory is discoverable for package imports
+# Ensure local src/ directory is discoverable
 import sys
 sys.path.append('/src')
 sys.path.append('/src/src')
@@ -38,13 +39,6 @@ class Predictor(BasePredictor):
         ).to(self.codec_device).eval()
         
         print("System Ready: FlashAttention-2 and CUDA architectures initialized.")
-
-    def _sample_top_k(self, logits: torch.Tensor, top_k: int = 50, temperature: float = 1.0) -> torch.Tensor:
-        logits = logits / max(temperature, 1e-5)
-        v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
-        logits[logits < v[..., [-1]]] = -float('Inf')
-        probs = torch.softmax(logits, dim=-1)
-        return torch.multinomial(probs, num_samples=1)
 
     def predict(
         self,
