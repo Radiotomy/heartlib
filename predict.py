@@ -6,9 +6,13 @@ from cog import BasePredictor, Input, Path
 from transformers import AutoTokenizer
 from huggingface_hub import snapshot_download
 
+# Ensure local src/ directory is discoverable for package imports
 import sys
-sys.path.append('/src/heartlib')
-from heartlib.models import HeartMuLaModel, HeartCodecModel
+sys.path.append('/src')
+sys.path.append('/src/src')
+
+from heartlib.heartmula.modeling_heartmula import HeartMuLaModel
+from heartlib.heartcodec.modeling_heartcodec import HeartCodecModel
 
 class Predictor(BasePredictor):
     def setup(self):
