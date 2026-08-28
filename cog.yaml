@@ -19,9 +19,9 @@ build:
   run:
     # 1. Install flash-attn safely without isolated build errors
     - "pip install flash-attn==2.6.3 --no-build-isolation"
-    # 2. Clone the heartlib repository
-    - "git clone url?id=1HeartMuLa/heartlib.git /src/heartlib"
-    # 3. CRITICAL: Install heartlib so Python's global environment registers it
+    # 2. Clone the heartlib repository using the fully qualified GitHub URL
+    - "git clone https://github.com/HeartMuLa/heartlib.git /src/heartlib"
+    # 3. Install heartlib so Python's global environment registers it
     - "cd /src/heartlib && pip install -e ."
 
 predict: "predict.py:Predictor"
