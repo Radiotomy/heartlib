@@ -1,13 +1,12 @@
 import os
 import time
 import torch
-import torch.nn as nn  # Fixes the missing 'nn' scope for transformers accelerate integration
+import torch.nn as nn
 import torchaudio
 from cog import BasePredictor, Input, Path
 from transformers import AutoTokenizer
 from huggingface_hub import snapshot_download
 
-# Ensure local src/ directory is discoverable
 import sys
 sys.path.append('/src')
 sys.path.append('/src/src')
@@ -17,28 +16,33 @@ from heartlib.heartcodec.modeling_heartcodec import HeartCodecModel
 
 class Predictor(BasePredictor):
     def setup(self):
+        print("[SETUP] Starting Predictor initialization...")
+        start_setup = time.time()
+        
         self.mula_device = "cuda:0"
         self.codec_device = "cuda:0"
         
-        print("Downloading/Locating HeartMuLa weights from Hugging Face...")
+        print("[SETUP] Locating or downloading model weights...")
         mula_path = snapshot_download(repo_id="HeartMuLa/HeartMuLa-oss-3B")
-        codec_path = snapshot_download(repo_id="HeartMuLa/HeartCodec-oss")
+        codec_path = snapshot_download(repo_id="HeartCodec-oss")
+        print(f"[SETUP] Weights verified locally in {time.time() - start_setup:.2f}s")
         
-        print("Loading HeartMuLa Tokenizer...")
+        print("[SETUP] Loading Tokenizer...")
         self.tokenizer = AutoTokenizer.from_pretrained(mula_path)
         
-        print("Loading HeartMuLa 3B (bf16) and HeartCodec (fp32)...")
+        print("[SETUP] Loading HeartMuLa 3B model (bf16)...")
         self.mula_model = HeartMuLaModel.from_pretrained(
             mula_path, 
             torch_dtype=torch.bfloat16
         ).to(self.mula_device).eval()
         
+        print("[SETUP] Loading HeartCodec model (fp32)...")
         self.codec_model = HeartCodecModel.from_pretrained(
             codec_path, 
             torch_dtype=torch.float32
         ).to(self.codec_device).eval()
         
-        print("System Ready: FlashAttention-2 and CUDA architectures initialized.")
+        print(f"[SETUP] Initialization fully completed in {time.time() - start_setup:.2f}s. System Ready.")
 
     def predict(
         self,
