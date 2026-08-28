@@ -1,12 +1,13 @@
 import os
 import time
 import torch
-import torch.nn as nn
+import torch.nn as nn  # Fixes the global scope NameError for accelerate
 import torchaudio
 from cog import BasePredictor, Input, Path
 from transformers import AutoTokenizer
 from huggingface_hub import snapshot_download
 
+# Ensure local src/ directory is discoverable
 import sys
 sys.path.append('/src')
 sys.path.append('/src/src')
